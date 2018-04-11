@@ -158,7 +158,62 @@ fork(void)
   safestrcpy(np->name, proc->name, sizeof(proc->name));
   return pid;
 }
+int
+clone(void(*fcn)(void *, void *), void *arg1, void *arg2, void *stack)
+{
+    int i,pid;
+    struct proc *np;
+    //Allocate the process 
+    if ((np = allocproc()) == 0){
+        return -1;
+    }
+    
+    np->pgdir = proc->pgdir;
+    
+    np->sz = proc->sz;
+    np->parent = proc;
+    *np->tf = *proc->tf;
+    //allocate the user stack
+    np->stack = stack;
 
+    //set the instruction pointer to the function passed in
+    np->tf->eip = (uint)fcn;
+    
+    //setup return address and arguments
+    void* ret;
+    void* argu1;
+    void* argu2;
+    ret = stack + PGSIZE - 3*sizeof(void*);
+    *(uint*)ret = 0xffffffff;
+    argu2 = stack + PGSIZE - 2*sizeof(void*);
+    *(uint*)argu2 = (uint)arg2;
+    argu1 = stack + PGSIZE - sizeof(void*);
+    *(uint*)argu1 = (uint)arg1;
+    np->tf->esp = (int)stack +  PGSIZE - 3 * sizeof(int *);
+    //set the base pointer to the caller's stack pointer
+    np->tf->ebp = np->tf->esp; 
+    //clear the eax
+    np->tf->eax = 0;
+
+
+    // copy file
+    for(i = 0; i < NOFILE; i++)
+        if(proc->ofile[i])
+            np->ofile[i] = filedup(proc->ofile[i]);
+    np->cwd = idup(proc->cwd);
+
+    
+    pid = np->pid;
+    np->state = RUNNABLE;
+    safestrcpy(np->name, proc->name, sizeof(proc->name));
+    return pid;
+}
+int join(void **stack)
+{
+
+
+    return -1;
+}
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
