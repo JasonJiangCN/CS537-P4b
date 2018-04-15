@@ -1,5 +1,5 @@
 /*
- * basic test for clone() and join()
+ * test for clone() where the thread function returns, requires manual inspection
  * Authors:
  * - Varun Naik, Spring 2018
  */
@@ -21,27 +21,28 @@ volatile int global = 0;
 void
 func(void *arg1, void *arg2)
 {
-  // Sleep, so that the thread terminates after join()
-  sleep(10);
-
-  // Make sure the scheduler is sane
-  check(global == 1, "global is incorrect");
-
   // Change external state
   cpid = getpid();
   check(cpid > ppid, "getpid() returned the wrong pid");
   ++global;
 
-  exit();
+  printf(1, "PID %d should trap to 0xffffffff...\n", getpid());
 
-  check(0, "Continued after exit");
+  // Return, rather than exit
+  return;
+}
+
+void
+crash(void)
+{
+  check(0, "Should not reach here");
 }
 
 int
 main(int argc, char *argv[])
 {
   void *stack1, *stack2;
-  int pid1, pid2, status;
+  int pid1, pid2, status, i;
 
   ppid = getpid();
   check(ppid > 2, "getpid() failed");
@@ -51,17 +52,23 @@ main(int argc, char *argv[])
   check(stack1 != (char *)-1, "sbrk() failed");
   check((uint)stack1 % PGSIZE == 0, "sbrk() return value is not page aligned");
 
+  // Fill the thread stack with pointers to crash()
+  for (i = 0; i < PGSIZE / sizeof(void *); ++i) {
+    ((void (**)(void))stack1)[i] = &crash;
+  }
+
   pid1 = clone(&func, NULL, NULL, stack1);
   check(pid1 > ppid, "clone() failed");
 
-  ++global;
   pid2 = join(&stack2);
   status = kill(pid1);
   check(status == -1, "Child was still alive after join()");
   check(pid1 == pid2, "join() returned the wrong pid");
   check(stack1 == stack2, "join() returned the wrong stack");
   check(cpid == pid1, "cpid is incorrect");
-  check(global == 2, "global is incorrect");
+  check(global == 1, "global is incorrect");
+  printf(1, "PID %d joined. Check manually if the trap succeeded.\n", cpid);
+  sleep(300);
 
   printf(1, "PASSED TEST!\n");
   exit();

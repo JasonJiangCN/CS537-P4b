@@ -3,6 +3,32 @@
 #include "fcntl.h"
 #include "user.h"
 #include "x86.h"
+#define PGSIZE 4096
+//threads
+int 
+thread_create(void (*start_routine)(void *, void *), void *arg1, void *arg2){
+    void* stack;
+    stack = malloc(2*PGSIZE);
+    return clone(start_routine,arg1,arg2,stack);
+}
+int 
+thread_join() {
+  void *stack;
+  int ret = join((&stack));
+  free(stack);
+  return ret;
+}
+void
+lock_init(lock_t *lock) {
+    lock->lock = 0;
+}
+void lock_acquire(lock_t *lock) {
+    while(xchg(&lock->lock, 1) != 0);
+}
+
+void lock_release(lock_t *lock) {
+    xchg(&lock->lock, 0);
+}
 
 char*
 strcpy(char *s, char *t)

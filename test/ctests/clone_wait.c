@@ -1,7 +1,8 @@
 /*
- * basic test for clone() and join()
+ * after clone(), wait() should not succeed
  * Authors:
  * - Varun Naik, Spring 2018
+ * - Inspired by a test case from Spring 2016, last modified by Akshay Uttamani
  */
 #include "types.h"
 #include "stat.h"
@@ -21,12 +22,6 @@ volatile int global = 0;
 void
 func(void *arg1, void *arg2)
 {
-  // Sleep, so that the thread terminates after join()
-  sleep(10);
-
-  // Make sure the scheduler is sane
-  check(global == 1, "global is incorrect");
-
   // Change external state
   cpid = getpid();
   check(cpid > ppid, "getpid() returned the wrong pid");
@@ -54,14 +49,19 @@ main(int argc, char *argv[])
   pid1 = clone(&func, NULL, NULL, stack1);
   check(pid1 > ppid, "clone() failed");
 
-  ++global;
+  // Sleep, so that the thread terminates before wait()
+  sleep(10);
+  check(cpid == pid1, "cpid is incorrect");
+  check(global == 1, "global is incorrect");
+
+  pid2 = wait();
+  check(pid2 == -1, "wait() returned the wrong pid");
+
   pid2 = join(&stack2);
   status = kill(pid1);
   check(status == -1, "Child was still alive after join()");
   check(pid1 == pid2, "join() returned the wrong pid");
   check(stack1 == stack2, "join() returned the wrong stack");
-  check(cpid == pid1, "cpid is incorrect");
-  check(global == 2, "global is incorrect");
 
   printf(1, "PASSED TEST!\n");
   exit();

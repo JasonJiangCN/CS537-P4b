@@ -210,8 +210,44 @@ clone(void(*fcn)(void *, void *), void *arg1, void *arg2, void *stack)
 }
 int join(void **stack)
 {
+    int pid;
+    struct proc *p;
+    int haveKids = 0;
+    acquire(&ptable.lock);
+    for (;;){
+        haveKids = 0;
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+            if (p->parent != proc || p->pgdir != proc->pgdir || proc->pid == p->pid)
+                continue;
+            haveKids = 1;
+            if (p->state == ZOMBIE) {
+                pid = p->pid;
+                void *stackAddr = 0x0;
+                *(uint *)stackAddr = p->tf->ebp;
+                *(uint *)stackAddr += 4 * sizeof(void *) - PGSIZE;
+                kfree(p->kstack);
+                p->kstack = 0;
+                p->state = UNUSED;
+                p->pid = 0;
+                p->parent = 0;
+                p->name[0] = 0;
+                p->killed = 0;
+                *stack = p->stack;
+                release(&ptable.lock);
+                return pid;
+            }
 
 
+        }
+        if (!haveKids || proc->killed) {
+            release(&ptable.lock);
+            return -1;
+        }
+
+        sleep(proc, &ptable.lock);
+
+
+    }
     return -1;
 }
 // Exit the current process.  Does not return.

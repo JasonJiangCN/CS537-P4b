@@ -7,19 +7,34 @@
 #include "sysfunc.h"
 
 int
-sys_fork(void)
-{
-  return fork();
-}
-int 
 sys_clone(void)
 {
-    return 0;
+    void (*fcn)(void*,void*);
+    void *arg1;
+    void *arg2;
+    void *stack;
+    if (argptr(0,(char**)&fcn, sizeof(void*)) < 0
+            || argptr(1,(char**)&arg1,sizeof(void*))<0
+            || argptr(2,(char**)&arg2,sizeof(void*))<0
+            || argptr(3,(char**)&stack,sizeof(void*))<0 )
+        return -1;
+    if ((uint)stack % PGSIZE != 0
+            || (uint)stack + PGSIZE > proc->sz)
+        return -1;
+  return clone(fcn,arg1,arg2,stack);
+}
+int 
+sys_fork(void)
+{
+    return fork();
 }
 int
 sys_join(void)
 {
-    return 0;
+    void**stack;
+    if (argptr(0,(char**)&stack,sizeof(void*))<0)
+        return -1;
+    return join(stack);
 }
 int
 sys_exit(void)
