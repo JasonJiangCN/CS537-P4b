@@ -25,7 +25,7 @@ func(void *arg1, void *arg2)
 
   // Assign retval to return value of clone()
   asm volatile("movl %%eax,%0" : "=r"(retval));
-
+  printf(1,"args1: %x, arg2: %x", *(int*)arg1, *(int*)arg2);
   check(*(int *)arg1 == 0xABCDABCD, "*arg1 is incorrect");
   check(*(int *)arg2 == 0xCDEFCDEF, "*arg2 is incorrect");
   check(((uint)&retval % PGSIZE) == 0xFE4, "Local variable is in wrong location");

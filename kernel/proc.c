@@ -5,7 +5,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-
+#define PGSIZE 4096
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -183,13 +183,14 @@ clone(void(*fcn)(void *, void *), void *arg1, void *arg2, void *stack)
     void* ret;
     void* argu1;
     void* argu2;
-    ret = stack + PGSIZE - 3*sizeof(void*);
+    ret = stack + 4096 - 3*sizeof(void*);
     *(uint*)ret = 0xffffffff;
-    argu2 = stack + PGSIZE - 2*sizeof(void*);
+    argu2 = stack + 4096 - 1*sizeof(void*);
     *(uint*)argu2 = (uint)arg2;
-    argu1 = stack + PGSIZE - sizeof(void*);
+    argu1 = stack + 4096 - 2*sizeof(void*);
+    
     *(uint*)argu1 = (uint)arg1;
-    np->tf->esp = (int)stack +  PGSIZE - 3 * sizeof(int *);
+    np->tf->esp = (int)stack +  4096 - 3 * sizeof(int *);
     //set the base pointer to the caller's stack pointer
     np->tf->ebp = np->tf->esp; 
     //clear the eax
