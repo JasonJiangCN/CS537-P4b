@@ -65,7 +65,7 @@ main(int argc, char *argv[])
 
   pid1 = thread_create(&func, &arg1, &arg2);
   check(pid1 > ppid, "thread_create() failed");
-
+    printf(1,"thread created%d\n", pid1);
   pid2 = thread_join();
   status = kill(pid1);
   check(status == -1, "Child was still alive after thread_join()");

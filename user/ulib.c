@@ -5,25 +5,51 @@
 #include "x86.h"
 #define PGSIZE 4096
 //threads
+struct _stackAddr{
+    void* malloc[64];
+    int pid[64];
+} stackAddr;
+int current = 0;
 int 
 thread_create(void (*start_routine)(void *, void *), void *arg1, void *arg2){
     void* stack;
     stack = malloc(2*PGSIZE);
+    stackAddr.malloc[current] = stack;
+    /*if (!stack){
+        return -1;
+    }*/
     if((uint)stack % PGSIZE)
         stack = stack + (PGSIZE - (uint)stack % PGSIZE);
-    return clone(start_routine,arg1,arg2,stack);
+    int ret = clone(start_routine,arg1,arg2,stack);
+
+    //printf(1,"%d",ret);
+    stackAddr.pid[current] = ret;
+    current++;
+
+    return ret;
 }
 int 
 thread_join() {
   void *stack;
   int ret = join((&stack));
+  //printf(1,"join done with return code %d\n", ret);
+  int i = 0;
+  for (i = 0; i < 64; i++){
+    //printf(1,"stackAddr%d with addr %x\n", stackAddr.pid[i], stackAddr.malloc[i]);
+    if (stackAddr.pid[i] == ret)
+        break;
+  }
+  stack = stackAddr.malloc[i];
+  //printf(1,"stack addr %x\n", stack);
   free(stack);
+
   return ret;
 }
 void
 lock_init(lock_t *lock) {
     lock->lock = 0;
 }
+//TODO make xchg to fetch-and-add
 void lock_acquire(lock_t *lock) {
     while(xchg(&lock->lock, 1) != 0);
 }

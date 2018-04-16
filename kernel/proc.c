@@ -16,7 +16,6 @@ static struct proc *initproc;
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
-
 static void wakeup1(void *chan);
 
 void
@@ -117,7 +116,21 @@ growproc(int n)
       return -1;
   }
   proc->sz = sz;
+  acquire(&ptable.lock);
+
+
+  struct proc* p=ptable.proc;
+
+  while(p<&ptable.proc[NPROC]){
+      if(p->pgdir==proc->pgdir&&p->state!=UNUSED)
+          p->sz = sz;
+
+      p++;
+  }
+
+  release(&ptable.lock);  
   switchuvm(proc);
+ 
   return 0;
 }
 
@@ -221,13 +234,14 @@ int join(void **stack)
             if (p->parent != proc || p->pgdir != proc->pgdir || proc->pid == p->pid)
                 continue;
             haveKids = 1;
-            if (p->state == ZOMBIE) {
+            if (p->state == ZOMBIE || p->killed == 1) {
                 pid = p->pid;
-                void *stackAddr = 0x0;
-                *(uint *)stackAddr = p->tf->ebp;
-                *(uint *)stackAddr += 4 * sizeof(void *) - PGSIZE;
+                //void *stackAddr = 0x0;
+                //*(uint *)stackAddr = p->tf->ebp;
+                //*(uint *)stackAddr += 4 * sizeof(void *) - PGSIZE;
                 kfree(p->kstack);
                 p->kstack = 0;
+                //freevm(p->pgdir);
                 p->state = UNUSED;
                 p->pid = 0;
                 p->parent = 0;

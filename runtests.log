@@ -8,7 +8,60 @@ build xv6 using make
 **********************************************************************
 Trying to build project using make
 make
-make: Nothing to be done for 'all'.
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/ulib.c -MF user/ulib.d -MT user/ulib.d -MT user/ulib.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/ulib.o user/ulib.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/cat user/cat.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/cat fs/cat
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/echo user/echo.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/echo fs/echo
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/grep user/grep.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/grep fs/grep
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/init user/init.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/init fs/init
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/kill user/kill.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/kill fs/kill
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/ln user/ln.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/ln fs/ln
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/ls user/ls.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/ls fs/ls
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/mkdir user/mkdir.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/mkdir fs/mkdir
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/rm user/rm.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/rm fs/rm
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/sh user/sh.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/sh fs/sh
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/stressfs user/stressfs.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/stressfs fs/stressfs
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/usertests user/usertests.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/usertests fs/usertests
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/wc user/wc.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/wc fs/wc
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/zombie user/zombie.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/zombie fs/zombie
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 455 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/tester user/bin/kill user/bin/cat user/bin/mkdir user/bin/init user/bin/rm user/bin/echo user/bin/ln user/bin/usertests user/bin/sh user/bin/wc user/bin/zombie
 
 
 test build PASSED
@@ -48,7 +101,7 @@ init
 kill
 mkdir
 wc
-balloc: first 438 blocks have been allocated
+balloc: first 453 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -107,7 +160,7 @@ init
 kill
 mkdir
 wc
-balloc: first 439 blocks have been allocated
+balloc: first 454 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -166,7 +219,7 @@ init
 kill
 mkdir
 wc
-balloc: first 439 blocks have been allocated
+balloc: first 454 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -186,7 +239,6 @@ init: starting sh
 $ tester
 tester
 PASSED TEST!
-
 
 test clone_child_sleep PASSED (10 of 10)
  (basic test for clone() and join())
@@ -225,7 +277,7 @@ init
 kill
 mkdir
 wc
-balloc: first 441 blocks have been allocated
+balloc: first 456 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -245,7 +297,6 @@ init: starting sh
 $ tester
 tester
 PASSED TEST!
-
 
 test clone_arguments PASSED (10 of 10)
  (test for arguments to clone() and join())
@@ -284,7 +335,7 @@ init
 kill
 mkdir
 wc
-balloc: first 442 blocks have been allocated
+balloc: first 456 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -304,7 +355,6 @@ init: starting sh
 $ tester
 tester
 PASSED TEST!
-
 
 test clone_bad PASSED (10 of 10)
  (error tests for clone() and join())
@@ -343,7 +393,7 @@ init
 kill
 mkdir
 wc
-balloc: first 440 blocks have been allocated
+balloc: first 455 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -405,7 +455,7 @@ init
 kill
 mkdir
 wc
-balloc: first 439 blocks have been allocated
+balloc: first 454 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -425,7 +475,6 @@ init: starting sh
 $ tester
 tester
 PASSED TEST!
-
 
 test clone_wait PASSED (10 of 10)
  (after clone(), wait() should not succeed)
@@ -464,7 +513,7 @@ init
 kill
 mkdir
 wc
-balloc: first 437 blocks have been allocated
+balloc: first 452 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -484,7 +533,6 @@ init: starting sh
 $ tester
 tester
 PASSED TEST!
-
 
 test fork_join PASSED (10 of 10)
  (after fork(), join() should not succeed)
@@ -523,7 +571,7 @@ init
 kill
 mkdir
 wc
-balloc: first 441 blocks have been allocated
+balloc: first 455 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -582,7 +630,7 @@ init
 kill
 mkdir
 wc
-balloc: first 445 blocks have been allocated
+balloc: first 460 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -604,12 +652,12 @@ tester
 Creating child threads...
 Created 61 child threads
 Joining all 61 child threads...
-pid 62 tester: trap 14 err 4 on cpu 0 eip 0xfb4 addr 0xc8f03aef--kill proc
-pid 63 tester: trap 14 err 5 on cpu 0 eip 0x2d addr 0xffffff83--kill proc
-pid 64 tester: trap 14 err 5 on cpu 0 eip 0x2d addr 0xffffff83--kill proc
-pid 3 tester: trap 14 err 4 on cpu 0 eip 0xfc1 addr 0xf8000012--kill proc
+pid 62 tester: trap 14 err 4 on cpu 1 eip 0xfcb addr 0x458b1775--kill proc
+pid 63 tester: trap 14 err 5 on cpu 1 eip 0x2d addr 0xffffff83--kill proc
+pid 64 tester: trap 14 err 5 on cpu 1 eip 0x2d addr 0xffffff83--kill proc
+pid 3 tester: trap 14 err 5 on cpu 1 eip 0x107e addr 0xfffffffc--kill proc
 zombie!
-cpu0: panic: kfree
+cpu1: panic: kfree
 
 
 test threads_many FAILED (0 of 10)
@@ -650,7 +698,7 @@ init
 kill
 mkdir
 wc
-balloc: first 439 blocks have been allocated
+balloc: first 454 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -715,7 +763,7 @@ init
 kill
 mkdir
 wc
-balloc: first 447 blocks have been allocated
+balloc: first 462 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -735,12 +783,13 @@ init: starting sh
 $ tester
 tester
 Creating 1 thread to call sbrk() once...
-user/tester.c:93 check (addr == (char *)stack1 + 2*PGSIZE) failed: sbrk() failed
-TEST FAILED
+Creating 2 threads to call sbrk() many times...
+cpu0: panic: remap
+ 107796 107bd9 
 
 test threads_sbrk FAILED (0 of 10)
  (test to make sure threads handle sbrk() correctly)
- tester failed
+ xv6 kernel panic
 
 starting lock_basic
 
@@ -776,7 +825,7 @@ init
 kill
 mkdir
 wc
-balloc: first 440 blocks have been allocated
+balloc: first 455 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -796,49 +845,11 @@ init: starting sh
 $ tester
 tester
 Unblocking all 50 threads...
-pid 18 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 19 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 20 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 21 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 22 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 23 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 24 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 25 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 26 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 27 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 28 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 29 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 30 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 31 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 32 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 35 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 36 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 37 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 38 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 39 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 40 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 41 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 42 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 43 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 44 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 45 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 47 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 49 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 50 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 51 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 52 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 53 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
-pid 34 tester: trap 13 err 0 on cpu 1 eip 0x4 addr 0x0--kill proc
-pid 46 tester: trap 13 err 0 on cpu 1 eip 0x4 addr 0x0--kill proc
-pid 48 tester: trap 13 err 0 on cpu 1 eip 0x4 addr 0x0--kill proc
-pid 33 tester: trap 13 err 65532 on cpu 0 eip 0x8 addr 0x0--kill proc
-user/tester.c:95 check (sum == NUM_THREADS*NUM_ITERATIONS) failed: sum is incorrect, data race occurred
-TEST FAILED
+PASSED TEST!
 
 
-test lock_basic FAILED (0 of 10)
+test lock_basic PASSED (10 of 10)
  (basic test for lock correctness)
- tester failed
 
 starting lock_setup
 
@@ -874,7 +885,7 @@ init
 kill
 mkdir
 wc
-balloc: first 440 blocks have been allocated
+balloc: first 455 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -943,15 +954,14 @@ test threads_zombies FAILED (0 of 10)
 
 test threads_sbrk FAILED (0 of 10)
  (test to make sure threads handle sbrk() correctly)
- tester failed
+ xv6 kernel panic
 
-test lock_basic FAILED (0 of 10)
+test lock_basic PASSED (10 of 10)
  (basic test for lock correctness)
- tester failed
 
 test lock_setup PASSED (10 of 10)
  (test that locks are set up correctly and do not interfere with each other)
 
-Passed 11 of 15 tests.
-Overall 11 of 15
-Points 100 of 140
+Passed 12 of 15 tests.
+Overall 12 of 15
+Points 110 of 140
