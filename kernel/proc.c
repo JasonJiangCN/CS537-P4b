@@ -11,6 +11,11 @@ struct {
   struct proc proc[NPROC];
 } ptable;
 
+struct _pgdir {
+    void* addr;
+    int num;
+} pgdirAddr[64];
+
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -97,6 +102,11 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+
+  //setup the pgdirAddr
+  for (int i = 0; i < 64; i++){
+        pgdirAddr[i].num = 0;
+  }
   release(&ptable.lock);
 }
 
@@ -158,6 +168,19 @@ fork(void)
   np->parent = proc;
   *np->tf = *proc->tf;
 
+  //store the page dir
+
+  for (int in = 0; in < 64; in++){
+        if (pgdirAddr[in].num == 0){
+            pgdirAddr[in].addr = np->pgdir;
+            pgdirAddr[in].num = 1;
+            break;
+        }
+  }
+
+  
+
+
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -182,7 +205,16 @@ clone(void(*fcn)(void *, void *), void *arg1, void *arg2, void *stack)
     }
     
     np->pgdir = proc->pgdir;
-    
+   
+   //store the pgdir number
+    for (int i = 0; i < 64; i++){
+        if (pgdirAddr[i].addr == np->pgdir){
+            pgdirAddr[i].num++;
+            break;           
+        }
+    }
+
+
     np->sz = proc->sz;
     np->parent = proc;
     *np->tf = *proc->tf;
@@ -247,6 +279,10 @@ int join(void **stack)
                 p->name[0] = 0;
                 p->killed = 0;
                 *stack = p->stack;
+                for (int in = 0; in < 64; in++){
+                    if (pgdirAddr[in].addr == p -> pgdir)
+                        pgdirAddr[in].num--;
+                }
                 release(&ptable.lock);
                 return pid;
             }
@@ -314,6 +350,7 @@ wait(void)
   struct proc *p;
   int havekids, pid;
     //cprintf("1");
+
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for zombie children.
@@ -327,7 +364,14 @@ wait(void)
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
-        freevm(p->pgdir);
+        
+        //find the pgdir on the array
+        for (int in = 0; in < 64; in++){
+            if (pgdirAddr[in].addr == p -> pgdir
+                    && pgdirAddr[in].num == 1)
+                freevm(p->pgdir);
+                break;
+        }        
         p->state = UNUSED;
         p->pid = 0;
         p->parent = 0;
