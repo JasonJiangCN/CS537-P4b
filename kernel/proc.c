@@ -67,6 +67,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  p->count = (int*)kalloc();
+  *(p->count) = 1;
+
   return p;
 }
 
@@ -220,6 +223,10 @@ clone(void(*fcn)(void *, void *), void *arg1, void *arg2, void *stack)
     pid = np->pid;
     np->state = RUNNABLE;
     safestrcpy(np->name, proc->name, sizeof(proc->name));
+
+    np->count = proc->count;
+    *(np->count) = *(np->count) + 1;
+
     return pid;
 }
 int join(void **stack)
@@ -231,10 +238,10 @@ int join(void **stack)
     for (;;){
         haveKids = 0;
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-            if (p->parent != proc || p->pgdir != proc->pgdir || proc->pid == p->pid)
+            if (p->parent != proc || p->pgdir != proc->pgdir)
                 continue;
             haveKids = 1;
-            if (p->state == ZOMBIE || p->killed == 1) {
+            if (p->state == ZOMBIE) {
                 pid = p->pid;
                 //void *stackAddr = 0x0;
                 //*(uint *)stackAddr = p->tf->ebp;
@@ -248,6 +255,9 @@ int join(void **stack)
                 p->killed = 0;
                 *stack = p->stack;
                 release(&ptable.lock);
+
+                *(p->count) = *(p->count) - 1;
+
                 return pid;
             }
 
@@ -322,7 +332,7 @@ wait(void)
       if(p->parent != proc || p->pgdir == proc->pgdir)
         continue;
       havekids = 1;
-      if(p->state == ZOMBIE){
+      if(p->state == ZOMBIE && *(p->count) == 1){
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
