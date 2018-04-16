@@ -4,45 +4,34 @@
 #include "user.h"
 #include "x86.h"
 #define PGSIZE 4096
-//threads
-struct _stackAddr{
-    void* malloc[64];
-    int pid[64];
-} stackAddr;
-int current = 0;
+
+void *stacks = NULL;
+int counter = 0;
+
 int 
 thread_create(void (*start_routine)(void *, void *), void *arg1, void *arg2){
-    void* stack;
-    stack = malloc(2*PGSIZE);
-    stackAddr.malloc[current] = stack;
-    /*if (!stack){
-        return -1;
-    }*/
-    if((uint)stack % PGSIZE)
-        stack = stack + (PGSIZE - (uint)stack % PGSIZE);
-    int ret = clone(start_routine,arg1,arg2,stack);
 
-    //printf(1,"%d",ret);
-    stackAddr.pid[current] = ret;
-    current++;
+    if(stacks == NULL){
+        stacks = malloc(65*PGSIZE);
 
+        if((uint)stacks % PGSIZE)
+            stacks = stacks + (PGSIZE - (uint)stacks % PGSIZE);
+    }
+
+    void *addr = stacks + counter*PGSIZE;
+    int ret = clone(start_routine, arg1, arg2, addr);
+    counter++;
     return ret;
 }
 int 
 thread_join() {
   void *stack;
   int ret = join((&stack));
-  //printf(1,"join done with return code %d\n", ret);
-  int i = 0;
-  for (i = 0; i < 64; i++){
-    //printf(1,"stackAddr%d with addr %x\n", stackAddr.pid[i], stackAddr.malloc[i]);
-    if (stackAddr.pid[i] == ret)
-        break;
+  counter--;
+ 
+  if(counter == 0){
+    free(stacks);
   }
-  stack = stackAddr.malloc[i];
-  //printf(1,"stack addr %x\n", stack);
-  free(stack);
-
   return ret;
 }
 void
