@@ -8,25 +8,7 @@ build xv6 using make
 **********************************************************************
 Trying to build project using make
 make
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
-	-M -MG kernel/proc.c -MF kernel/proc.d -MT kernel/proc.d -MT kernel/proc.o
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o kernel/proc.o kernel/proc.c
-ld  -m    elf_i386 -nostdlib --omagic \
-	--section-start=.text=0x100000 --entry=main --output=kernel/kernel \
-	kernel/multiboot.o kernel/data.o kernel/bio.o kernel/console.o kernel/exec.o kernel/file.o kernel/fs.o kernel/ide.o kernel/ioapic.o kernel/kalloc.o kernel/kbd.o kernel/lapic.o kernel/main.o kernel/mp.o kernel/picirq.o kernel/pipe.o kernel/proc.o kernel/spinlock.o kernel/string.o kernel/swtch.o kernel/syscall.o kernel/sysfile.o kernel/sysproc.o kernel/timer.o kernel/trapasm.o kernel/trap.o kernel/uart.o kernel/vectors.o kernel/vm.o \
-	-b binary initcode bootother
-dd if=/dev/zero of=xv6.img count=10000
-10000+0 records in
-10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0143907 s, 356 MB/s
-dd if=kernel/bootblock of=xv6.img conv=notrunc
-1+0 records in
-1+0 records out
-512 bytes copied, 5.7211e-05 s, 8.9 MB/s
-dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
-240+1 records in
-240+1 records out
-123272 bytes (123 kB, 120 KiB) copied, 0.000332579 s, 371 MB/s
+make: Nothing to be done for 'all'.
 
 
 test build PASSED
@@ -204,6 +186,7 @@ init: starting sh
 $ tester
 tester
 PASSED TEST!
+
 
 test clone_child_sleep PASSED (10 of 10)
  (basic test for clone() and join())
@@ -441,11 +424,534 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
+PASSED TEST!
 
 
-test clone_wait FAILED (0 of 10)
+test clone_wait PASSED (10 of 10)
  (after clone(), wait() should not succeed)
- Timelimit (10.0s) exceeded
 
-Skipped 7 tests.
-To keep testing after failing a test, use flag '-c' or '--continue'
+starting fork_join
+
+**********************************************************************
+
+Test fork_join
+after fork(), join() should not succeed
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/fork_join.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 437 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+PASSED TEST!
+
+
+test fork_join PASSED (10 of 10)
+ (after fork(), join() should not succeed)
+
+starting threads_basic
+
+**********************************************************************
+
+Test threads_basic
+basic tests for thread_create() and thread_join()
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/threads_basic.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 441 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+PASSED TEST!
+
+
+test threads_basic PASSED (10 of 10)
+ (basic tests for thread_create() and thread_join())
+
+starting threads_many
+
+**********************************************************************
+
+Test threads_many
+create and join many threads
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/threads_many.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 445 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+Creating child threads...
+Created 61 child threads
+Joining all 61 child threads...
+pid 62 tester: trap 14 err 4 on cpu 0 eip 0xfb4 addr 0xc8f03aef--kill proc
+pid 63 tester: trap 14 err 5 on cpu 0 eip 0x2d addr 0xffffff83--kill proc
+pid 64 tester: trap 14 err 5 on cpu 0 eip 0x2d addr 0xffffff83--kill proc
+pid 3 tester: trap 14 err 4 on cpu 0 eip 0xfc1 addr 0xf8000012--kill proc
+zombie!
+cpu0: panic: kfree
+
+
+test threads_many FAILED (0 of 10)
+ (create and join many threads)
+ xv6 kernel panic
+
+starting threads_zombies
+
+**********************************************************************
+
+Test threads_zombies
+create many threads, and make them all zombies
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/threads_zombies.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 439 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+Created 50 child threads, creator thread exiting...
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ 
+
+test threads_zombies FAILED (0 of 10)
+ (create many threads, and make them all zombies)
+ tester failed
+
+starting threads_sbrk
+
+**********************************************************************
+
+Test threads_sbrk
+test to make sure threads handle sbrk() correctly
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/threads_sbrk.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 447 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+Creating 1 thread to call sbrk() once...
+user/tester.c:93 check (addr == (char *)stack1 + 2*PGSIZE) failed: sbrk() failed
+TEST FAILED
+
+test threads_sbrk FAILED (0 of 10)
+ (test to make sure threads handle sbrk() correctly)
+ tester failed
+
+starting lock_basic
+
+**********************************************************************
+
+Test lock_basic
+basic test for lock correctness
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/lock_basic.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 440 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+Unblocking all 50 threads...
+pid 18 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 19 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 20 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 21 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 22 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 23 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 24 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 25 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 26 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 27 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 28 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 29 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 30 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 31 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 32 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 35 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 36 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 37 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 38 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 39 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 40 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 41 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 42 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 43 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 44 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 45 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 47 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 49 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 50 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 51 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 52 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 53 tester: trap 13 err 65532 on cpu 1 eip 0x8 addr 0x0--kill proc
+pid 34 tester: trap 13 err 0 on cpu 1 eip 0x4 addr 0x0--kill proc
+pid 46 tester: trap 13 err 0 on cpu 1 eip 0x4 addr 0x0--kill proc
+pid 48 tester: trap 13 err 0 on cpu 1 eip 0x4 addr 0x0--kill proc
+pid 33 tester: trap 13 err 65532 on cpu 0 eip 0x8 addr 0x0--kill proc
+user/tester.c:95 check (sum == NUM_THREADS*NUM_ITERATIONS) failed: sum is incorrect, data race occurred
+TEST FAILED
+
+
+test lock_basic FAILED (0 of 10)
+ (basic test for lock correctness)
+ tester failed
+
+starting lock_setup
+
+**********************************************************************
+
+Test lock_setup
+test that locks are set up correctly and do not interfere with each other
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b-new/ctests/lock_setup.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+	-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+zombie
+grep
+README
+rm
+echo
+tester
+cat
+stressfs
+ls
+ln
+sh
+usertests
+init
+kill
+mkdir
+wc
+balloc: first 440 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-1/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+WARNING: Image format was not specified for 'fs.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+WARNING: Image format was not specified for 'xv6.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+init: starting sh
+$ tester
+tester
+Unblocking all 50 threads...
+Acquiring and releasing multiple locks...
+PASSED TEST!
+
+
+test lock_setup PASSED (10 of 10)
+ (test that locks are set up correctly and do not interfere with each other)
+
+**********************************************************************
+Summary:
+test build PASSED
+ (build xv6 using make)
+
+test clone_basic PASSED (10 of 10)
+ (test for basic functionailty of clone(), with no cleanup)
+
+test clone_parent_sleep PASSED (10 of 10)
+ (test for clone() and join() where the thread terminates before join() is called)
+
+test clone_child_sleep PASSED (10 of 10)
+ (basic test for clone() and join())
+
+test clone_arguments PASSED (10 of 10)
+ (test for arguments to clone() and join())
+
+test clone_bad PASSED (10 of 10)
+ (error tests for clone() and join())
+
+test clone_return PASSED (10 of 10)
+ (test for clone() where the thread function returns, requires manual inspection)
+
+test clone_wait PASSED (10 of 10)
+ (after clone(), wait() should not succeed)
+
+test fork_join PASSED (10 of 10)
+ (after fork(), join() should not succeed)
+
+test threads_basic PASSED (10 of 10)
+ (basic tests for thread_create() and thread_join())
+
+test threads_many FAILED (0 of 10)
+ (create and join many threads)
+ xv6 kernel panic
+
+test threads_zombies FAILED (0 of 10)
+ (create many threads, and make them all zombies)
+ tester failed
+
+test threads_sbrk FAILED (0 of 10)
+ (test to make sure threads handle sbrk() correctly)
+ tester failed
+
+test lock_basic FAILED (0 of 10)
+ (basic test for lock correctness)
+ tester failed
+
+test lock_setup PASSED (10 of 10)
+ (test that locks are set up correctly and do not interfere with each other)
+
+Passed 11 of 15 tests.
+Overall 11 of 15
+Points 100 of 140

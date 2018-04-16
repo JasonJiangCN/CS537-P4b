@@ -249,7 +249,6 @@ int join(void **stack)
 
 
     }
-    return -1;
 }
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
@@ -301,13 +300,13 @@ wait(void)
 {
   struct proc *p;
   int havekids, pid;
-
+    //cprintf("1");
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for zombie children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != proc)
+      if(p->parent != proc || p->pgdir == proc->pgdir)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
@@ -322,6 +321,7 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         release(&ptable.lock);
+//cprintf("2");
         return pid;
       }
     }

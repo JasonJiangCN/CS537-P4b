@@ -9,6 +9,8 @@ int
 thread_create(void (*start_routine)(void *, void *), void *arg1, void *arg2){
     void* stack;
     stack = malloc(2*PGSIZE);
+    if((uint)stack % PGSIZE)
+        stack = stack + (PGSIZE - (uint)stack % PGSIZE);
     return clone(start_routine,arg1,arg2,stack);
 }
 int 
