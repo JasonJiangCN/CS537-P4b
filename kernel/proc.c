@@ -109,6 +109,7 @@ growproc(int n)
 {
   uint sz;
   
+  acquire(&ptable.lock);
   sz = proc->sz;
   if(n > 0){
     if((sz = allocuvm(proc->pgdir, sz, sz + n)) == 0)
@@ -118,7 +119,6 @@ growproc(int n)
       return -1;
   }
   proc->sz = sz;
-  acquire(&ptable.lock);
 
 
   struct proc* p=ptable.proc;
@@ -126,11 +126,12 @@ growproc(int n)
   while(p<&ptable.proc[NPROC]){
       if(p->pgdir==proc->pgdir&&p->state!=UNUSED)
           p->sz = sz;
-
       p++;
   }
 
   release(&ptable.lock);  
+  
+
   switchuvm(proc);
  
   return 0;
