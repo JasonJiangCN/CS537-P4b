@@ -9,8 +9,6 @@ build xv6 using make
 Trying to build project using make
 make
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
-	-M -MG user/ulib.c -MF user/ulib.d -MT user/ulib.d -MT user/ulib.o
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
 	-M -MG kernel/vm.c -MF kernel/vm.d -MT kernel/vm.d -MT kernel/vm.o
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
 	-M -MG kernel/uart.c -MF kernel/uart.d -MT kernel/uart.d -MT kernel/uart.o
@@ -62,67 +60,15 @@ ld  -m    elf_i386 -nostdlib --omagic \
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0147618 s, 347 MB/s
+5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0139971 s, 366 MB/s
 dd if=kernel/bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 7.0524e-05 s, 7.3 MB/s
+512 bytes copied, 5.2053e-05 s, 9.8 MB/s
 dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
 249+1 records in
 249+1 records out
-127600 bytes (128 kB, 125 KiB) copied, 0.000361116 s, 353 MB/s
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/ulib.o user/ulib.c
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/cat user/cat.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/cat fs/cat
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/echo user/echo.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/echo fs/echo
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/grep user/grep.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/grep fs/grep
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/init user/init.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/init fs/init
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/kill user/kill.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/kill fs/kill
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/ln user/ln.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/ln fs/ln
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/ls user/ls.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/ls fs/ls
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/mkdir user/mkdir.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/mkdir fs/mkdir
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/rm user/rm.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/rm fs/rm
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/sh user/sh.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/sh fs/sh
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/stressfs user/stressfs.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/stressfs fs/stressfs
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/tester fs/tester
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/usertests user/usertests.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/usertests fs/usertests
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/wc user/wc.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/wc fs/wc
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/zombie user/zombie.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/zombie fs/zombie
-./tools/mkfs fs.img fs
-used 29 (bit 1 ninode 26) free 29 total 1024
-mkdir
-ls
-rm
-usertests
-stressfs
-ln
-cat
-sh
-init
-README
-wc
-echo
-kill
-zombie
-grep
-tester
-balloc: first 445 blocks have been allocated
-balloc: write bitmap block at sector 28
-rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/tester user/bin/kill user/bin/cat user/bin/mkdir user/bin/init user/bin/rm user/bin/echo user/bin/ln user/bin/usertests user/bin/sh user/bin/wc user/bin/zombie
+127528 bytes (128 kB, 125 KiB) copied, 0.000378025 s, 337 MB/s
 
 
 test build PASSED
@@ -299,7 +245,6 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-main-loop: WARNING: I/O thread spun for 1000 iterations
 PASSED TEST!
 
 
@@ -600,7 +545,6 @@ $ tester
 tester
 PASSED TEST!
 
-
 test fork_join PASSED (10 of 10)
  (after fork(), join() should not succeed)
 
@@ -726,13 +670,11 @@ Joining all 61 child threads...
 All 61 child threads joined
 Creating and joining 10000 child threads...
 Forking and joining 100 child processes...
-user/tester.c:122 check (pid >= 0) failed: fork() failed
-TEST FAILED
+PASSED TEST!
 
 
-test threads_many FAILED (0 of 10)
+test threads_many PASSED (10 of 10)
  (create and join many threads)
- tester failed
 
 starting threads_zombies
 
@@ -849,8 +791,8 @@ $ tester
 tester
 Creating 1 thread to call sbrk() once...
 Creating 2 threads to call sbrk() many times...
-cpu1: panic: remap
- 107810 107c53 103e77 
+cpu0: panic: remap
+ 107817 107c5a 103e65
 
 test threads_sbrk FAILED (0 of 10)
  (test to make sure threads handle sbrk() correctly)
@@ -1009,9 +951,8 @@ test fork_join PASSED (10 of 10)
 test threads_basic PASSED (10 of 10)
  (basic tests for thread_create() and thread_join())
 
-test threads_many FAILED (0 of 10)
+test threads_many PASSED (10 of 10)
  (create and join many threads)
- tester failed
 
 test threads_zombies PASSED (10 of 10)
  (create many threads, and make them all zombies)
@@ -1026,6 +967,6 @@ test lock_basic PASSED (10 of 10)
 test lock_setup PASSED (10 of 10)
  (test that locks are set up correctly and do not interfere with each other)
 
-Passed 13 of 15 tests.
-Overall 13 of 15
-Points 120 of 140
+Passed 14 of 15 tests.
+Overall 14 of 15
+Points 130 of 140
