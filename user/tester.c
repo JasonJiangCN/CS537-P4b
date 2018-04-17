@@ -23,16 +23,16 @@ void
 func(void *arg1, void *arg2)
 {
   int pid;
-    printf(1,"enter func\n");
+
   // Sleep, so that (most of) the child thread runs after the main thread exits
   sleep(100);
 
-    printf(1,"after sleep\n");
   // Make sure the scheduler is sane
   check(global == 1, "global is incorrect");
 
   pid = getpid();
   check(ppid < pid && pid <= lastpid, "getpid() returned the wrong pid");
+
   if (pid == lastpid) {
     sleep(100);
     printf(1, "PASSED TEST!\n");
@@ -79,16 +79,14 @@ main(int argc, char *argv[])
     check(pid > ppid, "fork() failed");
     ppid = pid;
     lastpid = ppid;
-    printf(1,"before clone\n");
+
     for (i = 0; i < NUM_THREADS; ++i) {
       pid = clone(&func, NULL, NULL, (void *)(addr + i*PGSIZE));
-    printf(1,"clone success with pid %d\n", pid);
       check(pid != -1, "Not enough threads created");
       check(pid > lastpid, "clone() returned the wrong pid");
       lastpid = pid;
     }
 
-    
     printf(1, "Created %d child threads, creator thread exiting...\n", NUM_THREADS);
     global = 1;
     exit();
